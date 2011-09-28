@@ -10,6 +10,14 @@ identical content will all point at a single fixup commit).
 Furthermore, if one of the parents of the fixup commit is identical to
 the fixup commit itself, then the head or tag is moved to the parent.
 
+This script will also print commands to move a tag, which points at a fixup commit,
+to the fixup's parent when the fixup contains only file deletions.
+In this case the fixup represents a partial branch / tag taken across the 
+CVS repository. Executing the printed command moves the tag so that it spans the full git repo
+(potentially removing the fixup commit in the process).
+While the checkout from git will then contain additional files, in many instances
+this is desirable.
+
 The script is meant to be run against a repository converted by
 cvs2svn, since cvs2svn creates empty commits for some tags and head
 refs (branches).
@@ -55,6 +63,20 @@ def move_ref(ref, from_commit, to_commit, ref_type):
         else:
             print "FAILED"
 
+def is_pure_delete_commit(commit):
+    get_tree_cmd = ["git", "log", "--pretty=oneline", "--name-status", commit + "^.." + commit]
+    p = Popen(get_tree_cmd, stdout = PIPE)
+    line = p.stdout.readline().strip()
+    assert line.split()[0] == commit
+    while True:
+        line = p.stdout.readline().strip()
+        if not line:
+            break
+        if line.split()[0] != 'D':
+            assert line.split()[0] == 'A' or line.split()[0] == 'M'
+            return False
+    return True
+
 
 def try_to_move_ref(ref, commit, tree, parents, ref_type):
     """Try to move the given ref to a separate commit (with identical tree)."""
@@ -75,6 +97,12 @@ def try_to_move_ref(ref, commit, tree, parents, ref_type):
             move_ref(ref, commit, p, ref_type)
             commit = p
             break
+        elif len(parents) == 1:
+            # If this tag / branch is a pure deletion, then may also move to parent
+            if is_pure_delete_commit(commit):
+                print "# " + ("Tag" if "tags" else "Branch") + " points at a fixup commit spanning a subset of the repository. Consider tagging the whole repo by running:"
+                print "git " + ("tag" if "tags" else "branch") + " -f " + ref + " " + p
+            
 
     # Register the resulting commit object in the tree_cache
     assert tree not in tree_cache # Sanity check
