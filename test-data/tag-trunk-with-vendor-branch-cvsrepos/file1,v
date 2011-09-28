@@ -1,0 +1,107 @@
+head	1.4;
+access;
+symbols
+	BRANCH_2:1.4.0.2
+	TRUNK_TAG_3:1.4
+	IMPORT_2_TAG:1.1.1.2
+	TRUNK_TAG_2:1.3
+	BRANCH_1:1.2.0.2
+	TRUNK_TAG_1:1.2
+	IMPORT_1_TAG:1.1.1.1
+	UPSTREAM:1.1.1;
+locks; strict;
+comment	@# @;
+
+
+1.4
+date	2010.08.26.08.20.08;	author jamesb;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.08.26.08.15.43;	author jamesb;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.08.26.08.14.53;	author jamesb;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.08.26.08.13.52;	author jamesb;	state Exp;
+branches
+	1.1.1.1;
+next	;
+
+1.1.1.1
+date	2010.08.26.08.13.52;	author jamesb;	state Exp;
+branches;
+next	1.1.1.2;
+
+1.1.1.2
+date	2010.08.26.08.17.12;	author jamesb;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.4
+log
+@Merge changes into trunk
+@
+text
+@content1
+first_modification
+second_modification
+import_2_modified
+@
+
+
+1.3
+log
+@file1 modified for a second time!
+@
+text
+@d4 1
+@
+
+
+1.2
+log
+@File 1 modified on trunk
+@
+text
+@d3 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+@
+
+
+1.1.1.1
+log
+@Initial import
+@
+text
+@@
+
+
+1.1.1.2
+log
+@Initial import
+@
+text
+@a1 1
+import_2_modified
+@
+

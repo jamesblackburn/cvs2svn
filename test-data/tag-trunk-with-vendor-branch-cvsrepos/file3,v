@@ -1,0 +1,47 @@
+head	1.1;
+branch	1.1.1;
+access;
+symbols
+	BRANCH_2:1.1.1.1.0.4
+	TRUNK_TAG_3:1.1.1.1
+	IMPORT_2_TAG:1.1.1.1
+	TRUNK_TAG_2:1.1.1.1
+	BRANCH_1:1.1.1.1.0.2
+	TRUNK_TAG_1:1.1.1.1
+	IMPORT_1_TAG:1.1.1.1
+	UPSTREAM:1.1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2010.08.26.08.13.52;	author jamesb;	state Exp;
+branches
+	1.1.1.1;
+next	;
+
+1.1.1.1
+date	2010.08.26.08.13.52;	author jamesb;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@content3
+@
+
+
+1.1.1.1
+log
+@Initial import
+@
+text
+@@
