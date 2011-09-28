@@ -518,6 +518,10 @@ def verify_contents_single(failures, cvsrepos, verifyrepos, kind, label, ctx):
       verifyrepos.export_tag(vrf_export_dir, label)
     else:
       verifyrepos.export_branch(vrf_export_dir, label)
+      
+    if ctx.subtree:
+        vrf_export_dir = os.path.join(vrf_export_dir, ctx.subtree)
+        print "Verifying CVS checkout in: %s" % vrf_export_dir
 
     if not tree_compare(
           failures, cvs_export_dir, vrf_export_dir, ctx.run_diff
@@ -595,6 +599,10 @@ def main(argv):
                     help='verify contents of the branch BRANCH only')
   parser.add_option('--diff', action='store_true', dest='run_diff',
                     help='run diff on differing files')
+  parser.add_option('--subtree',
+                    help='subtree prefix in the converted repository. '
+                         'Needed when we map the CVS import to a subdirectory of our repo, '
+                        'and just want to check the converted subdirectory ')
   parser.add_option('--tag',
                     help='verify contents of the tag TAG only')
   parser.add_option('--tmpdir',
@@ -623,6 +631,9 @@ def main(argv):
                     metavar='OPT',
                     help='control CVS keyword expansion by adding OPT to '
                          'cvs export command line')
+  parser.add_option('--skip-cleanup',
+                    action="store_true", dest='skip_cleanup',
+                    help='don\'t remove the checked out files from the tmp directory')
 
   parser.set_defaults(run_diff=False,
                       tmpdir='',
