@@ -346,13 +346,29 @@ class GitRepos:
       cmd_failed(cmd, output, status)
     return output.split("\n")[:-1]
 
+class RegexpSymbolTransform():
+  """Transform symbols by using a regexp textual substitution."""
+
+  def __init__(self, pattern, replacement):
+    """Create a SymbolTransform that transforms symbols matching PATTERN.
+
+    PATTERN is a regular expression that should match the whole symbol
+    name.  REPLACEMENT is the replacement text, which may include
+    patterns like r'\1' or r'\g<1>' or r'\g<name>' (where 'name' is a
+    reference to a named substring in the pattern of the form
+    r'(?P<name>...)')."""
+
+    self.pattern = re.compile('^' + pattern + '$')
+    self.replacement = replacement
+
+  def transform(self, cvs_file, symbol_name, revision):
+    return self.pattern.sub(self.replacement, symbol_name)
 
 def transform_symbol(ctx, name):
   """Transform the symbol NAME using the renaming rules specified
   with --symbol-transform.  Return the transformed symbol name."""
-
-  for (pattern, replacement) in ctx.symbol_transforms:
-    newname = pattern.sub(replacement, name)
+  for transform in ctx.symbol_transforms:
+    newname = transform.transform(None, name, None)
     if newname != name:
       print "   symbol '%s' transformed to '%s'" % (name, newname)
       name = newname
@@ -611,19 +627,19 @@ def main(argv):
   parser.set_defaults(run_diff=False,
                       tmpdir='',
                       skip_cleanup=False,
-                      symbol_transforms=[],
+                      symbol_transform=[],
                       repos_type='svn')
   (options, args) = parser.parse_args()
 
   symbol_transforms = []
-  for value in options.symbol_transforms:
-    # This is broken!
+  for value in options.symbol_transform:
     [pattern, replacement] = value.split(":")
     try:
       symbol_transforms.append(
           RegexpSymbolTransform(pattern, replacement))
     except re.error:
       parser.error("'%s' is not a valid regexp." % (pattern,))
+  options.symbol_transforms = symbol_transforms
 
   def error(msg):
     """Print an error to sys.stderr."""
